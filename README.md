@@ -56,7 +56,7 @@ bash check.sh           # compiles TM.lean and TM2.lean, prints #print axioms, g
 ```
 Expected result: every main theorem depends on `[propext, Classical.choice, Quot.sound]`, and the keyword grep prints `none`. The formalisation was checked in the `formal-conjectures` Lake environment with Mathlib at the same pinned revision (see `research-log/LEAN_formalisation_log.md`).
 
-**Numerics** (Python, numpy/scipy; independent of the proof):
+**Numerics** (Python; see `requirements.txt`: numpy/scipy/sympy, torch only for the adversarial searches; independent of the proof):
 ```bash
 cd code
 python verify_tm_proof.py      # 3000 random instances (d in {3,5,7}, random MUB subsets): slacks >= -4.2e-14

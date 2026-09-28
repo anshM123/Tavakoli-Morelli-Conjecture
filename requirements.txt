@@ -1,0 +1,5 @@
+numpy>=1.24
+scipy>=1.10
+sympy>=1.12
+# only for adversarial.py, tight_eam.py, tm_conjecture.py / tm_strong.py (optimisation searches):
+torch>=2.0
