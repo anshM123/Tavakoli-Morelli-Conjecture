@@ -1,0 +1,31 @@
+# TMProof fresh check, started 2026-09-28 17:45:49 EDT
+# lean: Lean (version 4.33.1, x86_64-w64-windows-gnu, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)
+# mathlib rev: "rev": "0df444a360eaa60ab8c11dca51a86af692955474"
+# sha256 TM.lean  b1b87a9ef0ff7084486650450cd7396255fae92d3cc36e041fabeea5c0563a7d
+# sha256 TM2.lean 5e0c40a33c3165afd1aec25ce64bd1db92f95c1c9a3945cf08893d3d87ab237b
+== TMProof/TM.lean   (17:53:42)
+'TMProof.schmidt_mub_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_mub_bound_mixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_3_dual' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_3' depends on axioms: [propext, Classical.choice, Quot.sound]
+== TMProof/TM2.lean   (17:54:12)
+'TMProof.eam_bessel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_eam_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_eam_bound_mixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_2_dual' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.traceNorm_eamProbMatrix_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_eam_traceNorm_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_eam_traceNorm_bound_mixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.eamProbMatrix_eq_trace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.traceNorm_trine_bellState' depends on axioms: [propext, Classical.choice, Quot.sound]
+== TMProof/Axioms.lean   (17:54:42)
+'TMProof.tavakoli_morelli_conjecture_3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_3_dual' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_mub_traceNorm_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.tavakoli_morelli_conjecture_2_dual' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TMProof.schmidt_eam_traceNorm_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+== forbidden keywords (sorry/admit/axiom/native_decide):
+none
+CHECK_EXIT=0 after 556 s (including waits for a free Lean slot)

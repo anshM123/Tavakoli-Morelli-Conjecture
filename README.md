@@ -56,6 +56,8 @@ bash check.sh           # compiles TM.lean and TM2.lean, prints #print axioms, g
 ```
 Expected result: every main theorem depends on `[propext, Classical.choice, Quot.sound]`, and the keyword grep prints `none`. The formalisation was checked in the `formal-conjectures` Lake environment with Mathlib at the same pinned revision (see `research-log/LEAN_formalisation_log.md`).
 
+Our fresh run (2026-09-28, Lean 4.33.1, Mathlib `0df444a3…`, file hashes recorded in the log): `logs/lean_check_fresh.log`. It shows `CHECK_EXIT=0`, standard axioms only for every listed theorem, and keyword grep `none`.
+
 **Numerics** (Python; see `requirements.txt`: numpy/scipy/sympy, torch only for the adversarial searches; independent of the proof):
 ```bash
 cd code
@@ -73,4 +75,5 @@ python adversarial.py          # adversarial search for violations of the streng
 - `PROOF.md`: the full mathematical proof, with corollaries and tightness.
 - `lean/`: the Lean project (`TMProof/TM.lean`, `TM2.lean`, `Axioms.lean`, `check.sh`, `lakefile.toml`, `lean-toolchain`).
 - `code/`: numerical verification.
+- `logs/`: our Lean verification run (`lean_check_fresh.log`).
 - `research-log/`: working logs, including the Lean formalisation log.
