@@ -3,7 +3,7 @@
 Status: **PROVEN** and machine-checked in Lean 4 (`lean/TMProof/TM.lean` for Conjecture 3, `lean/TMProof/TM2.lean` for Conjecture 2). Also verified by an independent hand check of every step and by an
 independent numerical test (`code/verify_tm_proof.py`, 3000 random instances d ∈ {3,5,7}, random MUB subsets,
 independent Alice/Bob sets: Lemma 1 slack ≤ 1.2e-14, Lemma 2 ≤ 4.5e-14, Theorem ≤ 4.2e-14; tightness exact).
-Discovery path: coordinator found numerically (R014) the strengthened inequality ‖Q_m(X)‖₁ ≤ ‖X‖_F² + (m−1)‖X‖₁²/d.
+The strengthened inequality ‖Q_m(X)‖₁ ≤ ‖X‖_F² + (m−1)‖X‖₁²/d was first found numerically.
 
 ## Theorem 1
 {e^k_a}_{k≤m_A}: MUBs in C^{d_A}; {f^l_b}_{l≤m_B}: MUBs in C^{d_B}; X ∈ C^{d_A×d_B}; Q = [|⟨e^k_a|X|f^l_b⟩|²].
@@ -40,9 +40,9 @@ Apply Lemma 2 to |X†| and |X| (Tr = τ, Tr(·)² = N). ∎
 - Why the original paper got stuck: the triangle inequality over Schmidt terms gives τ² + (m−1)N/d, weaker by (τ²−N)(d+1−m)/d.
 
 ## Novelty check
-- All 21 papers citing 2402.09972 (Semantic Scholar) screened by P-TM (incl. 2608.02439, Aug 2026); closest 2412.10074, 2505.02297 use triangle-inequality bounds; none addresses Conj. 2/3.
-- Coordinator: 2506.18211 (Siudzińska) full text — no mention of the conjectures; covers conical 2-designs (complete sets) only.
-- WebSearch quota exhausted; Google Scholar not checked.
+- All 21 papers citing 2402.09972 (Semantic Scholar) screened (incl. 2608.02439, Aug 2026); closest 2412.10074, 2505.02297 use triangle-inequality bounds; none addresses Conj. 2/3.
+- 2506.18211 (Siudzińska), full text: no mention of the conjectures; covers conical 2-designs (complete sets) only.
+- Google Scholar was not checked.
 
 ## Files
 `code/`: tmlib.py, verify_all.py, adversarial.py (+ _out.txt), tight_eam.py (+ _out.txt), simplex_projectors.py, symbolic_checks.py; independent check verify_tm_proof.py, tm_strong.py, tm_conjecture.py.

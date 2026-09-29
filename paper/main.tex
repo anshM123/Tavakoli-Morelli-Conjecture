@@ -1,0 +1,434 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{alltt}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Herm}{\operatorname{Herm}}
+\newcommand{\SN}{\operatorname{SN}}
+\newcommand{\one}{\mathbb{I}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\bra}[1]{\langle #1|}
+\newcommand{\lean}[1]{\texttt{#1}}
+\setlength{\emergencystretch}{3em}
+
+\begin{document}
+
+\title[Tavakoli--Morelli Schmidt-number conjectures]{Proof of two conjectures of Tavakoli and Morelli\\ on Schmidt-number witnesses}
+
+\author{Ansh Mishra}
+\author{Aryan Senthilkumar}
+
+\date{September 2026}
+
+\begin{abstract}
+Tavakoli and Morelli [Phys.\ Rev.\ A \textbf{110}, 062417 (2024)] proposed Schmidt-number witnesses based on the
+trace norm of the matrix of joint outcome probabilities of two local measurements. They conjectured tight bounds
+for incomplete sets of mutually unbiased bases (their Conjecture~3) and for equiangular measurements (their
+Conjecture~2). We prove both conjectures. For $m$ mutually unbiased bases in $\C^d$ on each side and every state
+of Schmidt number at most $r$, the correlation matrix satisfies $\|Q_m\|_{\tr}\le 1+(m-1)r/d$, and this is tight
+for every $d$, $m$ and $r$. For equiangular measurements with $n>d$ outcomes,
+$\|P_n\|_{\tr}\le[d(d-1)+r(n-d)]/[n(n-1)]$. Both results follow from a single inequality for rank-one
+measurements whose frame operator fixes the identity. Its proof combines a Gram factorisation of the correlation
+matrix, H\"older's inequality for Schatten norms, and a Bessel-type bound for the measurement frame. Both theorems
+are formalised in the Lean~4 proof assistant with the Mathlib library, using only Lean's standard axioms.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+The Schmidt number of a bipartite state is the smallest $r$ such that the state is a mixture of pure states of
+Schmidt rank at most $r$~\cite{TerhalHorodecki2000}. It quantifies the dimensionality of entanglement, and
+certifying it from few measurements is a basic task in high-dimensional quantum information; see, e.g.,
+\cite{Spengler2012,Bavaresco2018}. Tavakoli and Morelli~\cite{TavakoliMorelli2024} proposed witnesses built from
+the matrix of joint outcome probabilities when Alice and Bob each measure one of several local bases or a single
+informationally rich measurement. The criterion is an upper bound on the trace norm of this matrix, valid for all
+states of Schmidt number at most $r$; a larger trace norm certifies Schmidt number larger than $r$. For
+incomplete sets of mutually unbiased bases (MUBs)~\cite{WoottersFields1989,Durt2010} and for equiangular
+measurements they conjectured the tight value of this bound (Conjectures~3 and~2 of~\cite{TavakoliMorelli2024}).
+
+We prove both conjectures (Theorems~\ref{thm:mub} and~\ref{thm:eam}). Both are corollaries of a general
+inequality (Theorem~\ref{thm:general}): if the frame operator of a rank-one measurement maps the identity to a
+multiple of itself, with eigenvalue $\alpha$, and is bounded by $\beta$ on traceless operators, then states of
+Schmidt number at most $r$ give correlation matrices of trace norm at most $\beta+(\alpha-\beta)r/d$ (when both
+parties use such measurements with the same constants). The proof has two ingredients. First, a Gram
+factorisation of the correlation matrix of a pure state, combined with H\"older's inequality, bounds its trace
+norm by a product of two ``index of coincidence'' quantities, one for each party (Lemma~\ref{lem:factor}).
+Second, a Bessel-type bound controls these quantities through the trace and the Hilbert--Schmidt norm of the
+modulus of the coefficient matrix (Lemmas~\ref{lem:frameMUB} and~\ref{lem:frameEAM}). The Schmidt rank enters only
+through the elementary inequality $\|X\|_1^2\le r\|X\|_2^2$.
+
+A natural first attempt applies the triangle inequality to the Schmidt decomposition. It gives only
+$\|Q_m\|_{\tr}\le r+(m-1)/d$ for Schmidt rank $r$, which exceeds the tight value by $(r-1)(d+1-m)/d$
+(Remark~\ref{rem:triangle}). The factorisation above avoids this loss.
+
+Both main theorems have been formalised in Lean~4~\cite{Lean4} with Mathlib~\cite{Mathlib2020}
+(Section~\ref{sec:lean}).
+
+\section{Setting and results}\label{sec:results}
+
+Throughout, $d\ge2$, vectors live in $\C^d$ with its standard basis, and $\bar v$ denotes the entrywise complex
+conjugate of a vector $v$. The trace norm $\|A\|_{\tr}=\|A\|_1$ of a matrix is the sum of its singular values,
+and $\|A\|_2=(\Tr A^\dagger A)^{1/2}$ is the Hilbert--Schmidt (Frobenius) norm. For a matrix $X$ we write
+$|X|=(X^\dagger X)^{1/2}$ and $|X^\dagger|=(XX^\dagger)^{1/2}$.
+
+\begin{definition}
+\begin{enumerate}
+\item \emph{MUBs.} A family $\{e^k_a\}$, $k=1,\dots,m$, $a=1,\dots,d$, consists of $m$ mutually unbiased bases if
+each $\{e^k_a\}_a$ is an orthonormal basis of $\C^d$ and $|\langle e^k_a|e^l_b\rangle|^2=1/d$ for $k\neq l$.
+\item \emph{Equiangular measurements (EAMs).} Unit vectors $\psi_1,\dots,\psi_n\in\C^d$ with $n>d$ form an
+equiangular measurement if $\sum_a\ket{\psi_a}\bra{\psi_a}=\frac nd\one$ and
+$|\langle\psi_a|\psi_b\rangle|^2=c$ for $a\neq b$, where necessarily $c=c_{n,d}=\frac{n-d}{d(n-1)}$. The
+measurement operators are $E_a=\frac dn\ket{\psi_a}\bra{\psi_a}$.
+\item \emph{Schmidt number.} A state $\rho$ on $\C^d\otimes\C^d$ has Schmidt number at most $r$, written
+$\SN(\rho)\le r$, if it is a finite convex combination of projectors onto unit vectors of Schmidt rank at most
+$r$~\cite{TerhalHorodecki2000}.
+\item \emph{Correlation matrices}~\cite{TavakoliMorelli2024}. For MUBs $\{e^k_a\}$ (Alice) and $\{f^l_b\}$ (Bob),
+$Q_m(\rho)$ is the real $md\times md$ matrix with entries
+$Q_{(k,a),(l,b)}=\bra{e^k_a\otimes f^l_b}\rho\ket{e^k_a\otimes f^l_b}$. For EAMs $\{\psi_a\}$ and $\{\varphi_b\}$,
+$P_n(\rho)$ is the $n\times n$ matrix with entries
+$P_{ab}=\Tr[\rho(E_a\otimes F_b)]=\frac{d^2}{n^2}\bra{\psi_a\otimes\varphi_b}\rho\ket{\psi_a\otimes\varphi_b}$.
+\end{enumerate}
+\end{definition}
+
+The value of $c_{n,d}$ follows by taking the trace of $(\sum_a\ket{\psi_a}\bra{\psi_a})^2=\frac{n^2}{d^2}\one$.
+
+\begin{theorem}[Conjecture~3 of \cite{TavakoliMorelli2024}]\label{thm:mub}
+Let $\{e^k_a\}$ and $\{f^l_b\}$ be two sets of $m\ge1$ mutually unbiased bases of $\C^d$, and let
+$\SN(\rho)\le r$. Then
+\[
+\|Q_m(\rho)\|_{\tr}\;\le\;1+\frac{(m-1)r}{d}.
+\]
+For every $d$, every $m$ for which $m$ MUBs exist in $\C^d$, and every $1\le r\le d$, equality is attained.
+\end{theorem}
+
+\begin{theorem}[Conjecture~2 of \cite{TavakoliMorelli2024}]\label{thm:eam}
+Let $\{\psi_a\}$ and $\{\varphi_b\}$ be equiangular measurements with $n>d$ elements in $\C^d$, and let
+$\SN(\rho)\le r$. Then
+\[
+\|P_n(\rho)\|_{\tr}\;\le\;\frac{d(d-1)+r(n-d)}{n(n-1)}.
+\]
+Equality is attained for $r\in\{1,d-1,d\}$ for every EAM, and for every $r$ whenever the real span of the
+projectors $\ket{\psi_a}\bra{\psi_a}$ contains a projector of rank $r$ (for instance for SICs, $n=d^2$).
+\end{theorem}
+
+Both theorems are special cases of the following inequality. For a finite family $a=\{a_i\}$ of vectors in $\C^d$
+(not necessarily normalised) and a Hermitian matrix $A$, write
+\[
+I_a(A)=\sum_i\bra{a_i}A\ket{a_i}^2 .
+\]
+\begin{definition}\label{def:frame}
+A family $a$ has \emph{frame constants} $(\alpha,\beta)$, with $\alpha\ge\beta\ge0$, if for every Hermitian $A$
+\begin{equation}\label{eq:frame}
+I_a(A)\;\le\;\beta\Tr(A^2)+(\alpha-\beta)\frac{(\Tr A)^2}{d}.
+\end{equation}
+\end{definition}
+
+\begin{theorem}[general bound]\label{thm:general}
+Let $a=\{a_i\}_{i\in I}$ and $b=\{b_j\}_{j\in J}$ be families in $\C^d$ with frame constants $(\alpha_a,\beta_a)$
+and $(\alpha_b,\beta_b)$, and let $M(\rho)$ be the $|I|\times|J|$ matrix with entries
+$M_{ij}=\bra{a_i\otimes b_j}\rho\ket{a_i\otimes b_j}$. If $\SN(\rho)\le r$, then
+\[
+\|M(\rho)\|_{\tr}\le\Bigl(\beta_a+(\alpha_a-\beta_a)\frac rd\Bigr)^{1/2}\Bigl(\beta_b+(\alpha_b-\beta_b)\frac rd\Bigr)^{1/2}.
+\]
+More precisely, for a unit vector $\ket\psi=\sum_{ij}X_{ij}\ket i\ket j$,
+\begin{equation}\label{eq:pure}
+\|M(\ket\psi\bra\psi)\|_{\tr}\le\Bigl(\beta_a+(\alpha_a-\beta_a)\frac{\|X\|_1^2}{d}\Bigr)^{1/2}
+\Bigl(\beta_b+(\alpha_b-\beta_b)\frac{\|X\|_1^2}{d}\Bigr)^{1/2}.
+\end{equation}
+\end{theorem}
+
+Lemmas~\ref{lem:frameMUB} and~\ref{lem:frameEAM} below give the frame constants
+\[
+\text{$m$ MUBs: }(\alpha,\beta)=(m,1);\qquad
+\text{EAM vectors }\sqrt{d/n}\,\psi_a:\ (\alpha,\beta)=\Bigl(\frac dn,\ \frac{d(d-1)}{n(n-1)}\Bigr).
+\]
+With these values Theorem~\ref{thm:general} gives exactly the bounds of Theorems~\ref{thm:mub}
+and~\ref{thm:eam}. For the EAM,
+$\beta+(\alpha-\beta)\frac rd=\frac{d(d-1)}{n(n-1)}+\frac rn-\frac{(d-1)r}{n(n-1)}=\frac{d(d-1)+r(n-d)}{n(n-1)}$.
+
+\section{Proof of the general bound}\label{sec:proof}
+
+\subsection{Pure states and coefficient matrices}
+A vector $\ket\psi=\sum_{ij}X_{ij}\ket i\ket j$ of $\C^d\otimes\C^d$ is determined by its coefficient matrix
+$X\in\C^{d\times d}$. Then $\|\psi\|^2=\|X\|_2^2$, the Schmidt coefficients of $\psi$ are the singular values of
+$X$, and the Schmidt rank of $\psi$ is $\operatorname{rank}X$. For $u,v\in\C^d$,
+\[
+\langle u\otimes v|\psi\rangle=\sum_{ij}\bar u_i\bar v_jX_{ij}=\bra uX\ket{\bar v},
+\]
+so $M_{ij}(\ket\psi\bra\psi)=|\bra{a_i}X\ket{\bar b_j}|^2$.
+
+\subsection{Gram factorisation}
+
+\begin{lemma}\label{lem:factor}
+Let $X\in\C^{d\times d}$ and let $\{a_i\}_{i\in I}$, $\{b_j\}_{j\in J}$ be finite families in $\C^d$. The matrix
+$M_{ij}=|\bra{a_i}X\ket{b_j}|^2$ satisfies
+\[
+\|M\|_1\;\le\;I_a(|X^\dagger|)^{1/2}\,I_b(|X|)^{1/2}.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $X=\sum_s\sigma_s\ket{u_s}\bra{v_s}$ be a singular value decomposition with $\sigma_s>0$ and orthonormal
+families $\{u_s\}$, $\{v_s\}$. Put
+\[
+L=\sum_s\sigma_s^{1/2}\ket{u_s}\bra{u_s},\qquad R=\sum_s\sigma_s^{1/2}\ket{v_s}\bra{v_s},\qquad
+W=\sum_s\ket{u_s}\bra{v_s}.
+\]
+Then $LWR=X$, $L^2=|X^\dagger|$, $R^2=|X|$, and $W^\dagger W R=R$, because $W^\dagger W=\sum_s\ket{v_s}\bra{v_s}$
+is the projector onto the range of $R$. Let $x_i=La_i$ and $y_j=WRb_j$. Since $L$ is Hermitian,
+$\bra{a_i}X\ket{b_j}=\langle x_i|y_j\rangle$. With $\xi_i=x_i\otimes\bar x_i$ and $\eta_j=y_j\otimes\bar y_j$ we get
+$\langle\xi_i|\eta_j\rangle=\langle x_i|y_j\rangle\overline{\langle x_i|y_j\rangle}=M_{ij}$, that is,
+$M=\Xi^\dagger H$, where $\Xi$ and $H$ are the matrices with columns $\xi_i$ and $\eta_j$. H\"older's inequality for
+Schatten norms, $\|\Xi^\dagger H\|_1\le\|\Xi\|_2\|H\|_2$~\cite{Bhatia1997}, gives the claim, since
+\[
+\|\Xi\|_2^2=\sum_i\|\xi_i\|^2=\sum_i\|x_i\|^4=\sum_i\bra{a_i}L^2\ket{a_i}^2=I_a(|X^\dagger|)
+\]
+and
+\[
+\|H\|_2^2=\sum_j\|y_j\|^4=\sum_j\bra{b_j}RW^\dagger WR\ket{b_j}^2=\sum_j\bra{b_j}R^2\ket{b_j}^2=I_b(|X|). \qedhere
+\]
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:general}}
+Let $\ket\psi$ be a unit vector with coefficient matrix $X$, so $\|X\|_2=1$. By Lemma~\ref{lem:factor}, applied to
+the families $a$ and $\bar b=\{\bar b_j\}$,
+\[
+\|M(\ket\psi\bra\psi)\|_1\le I_a(|X^\dagger|)^{1/2}I_{\bar b}(|X|)^{1/2}.
+\]
+The family $\bar b$ has the same frame constants as $b$: for Hermitian $A$ we have
+$I_{\bar b}(A)=\sum_j\bra{b_j}\bar A\ket{b_j}^2=I_b(\bar A)$, and $\bar A$ is Hermitian with the same trace and the
+same Hilbert--Schmidt norm as $A$. The matrices $|X^\dagger|$ and $|X|$ are Hermitian, with
+$\Tr|X^\dagger|=\Tr|X|=\|X\|_1$ and $\Tr|X^\dagger|^2=\Tr|X|^2=\|X\|_2^2=1$. Inserting them into~\eqref{eq:frame}
+gives~\eqref{eq:pure}. If $\psi$ has Schmidt rank at most $r$, then $X$ has at most $r$ nonzero singular values,
+and the Cauchy--Schwarz inequality gives $\|X\|_1^2\le r\|X\|_2^2=r$. Since $\alpha\ge\beta$, the right-hand side
+of~\eqref{eq:pure} is nondecreasing in $\|X\|_1^2$, which proves the bound for pure states. Finally, if
+$\rho=\sum_tp_t\ket{\psi_t}\bra{\psi_t}$ with $p_t\ge0$, $\sum_tp_t=1$ and each $\psi_t$ of Schmidt rank at most
+$r$, then $M(\rho)=\sum_tp_tM(\ket{\psi_t}\bra{\psi_t})$, and the triangle inequality for $\|\cdot\|_1$ completes
+the proof. \qed
+
+\section{Frame constants of MUBs and of equiangular measurements}\label{sec:frames}
+
+We work in the real Hilbert space $\Herm(d)$ of Hermitian matrices with $\langle A,B\rangle=\Tr(AB)$. For a unit
+vector $v$, $\bra vA\ket v=\langle P_v,A\rangle$ with $P_v=\ket v\bra v$. Every Hermitian $A$ decomposes
+orthogonally as $A=\frac{\Tr A}{d}\one+A_0$ with $\Tr A_0=0$, and
+$\|A_0\|_2^2=\Tr(A^2)-(\Tr A)^2/d$.
+
+\begin{lemma}[MUB frames]\label{lem:frameMUB}
+The family of all vectors of $m$ mutually unbiased bases has frame constants $(m,1)$:
+\[
+\sum_{k=1}^m\sum_{a=1}^d\bra{e^k_a}A\ket{e^k_a}^2\;\le\;\Tr(A^2)+(m-1)\frac{(\Tr A)^2}{d}.
+\]
+Equality holds if and only if $A_0\in S_1\oplus\dots\oplus S_m$, with $S_k$ as in the proof.
+\end{lemma}
+
+\begin{proof}
+Fix $k$ and let $P^k_a=\ket{e^k_a}\bra{e^k_a}$. The $P^k_a$, $a=1,\dots,d$, are orthonormal in $\Herm(d)$ and span
+$V_k=\R\one\oplus S_k$, where $S_k=\{\sum_ac_aP^k_a:\sum_ac_a=0\}$ is orthogonal to $\one$. Hence
+\[
+\sum_a\langle P^k_a,A\rangle^2=\|\Pi_{V_k}A\|_2^2=\frac{(\Tr A)^2}{d}+\|\Pi_{S_k}A_0\|_2^2 ,
+\]
+where $\Pi$ denotes orthogonal projection. For $k\neq l$ the subspaces $S_k$ and $S_l$ are orthogonal:
+\[
+\Tr\Bigl[\Bigl(\sum_ac_aP^k_a\Bigr)\Bigl(\sum_bc'_bP^l_b\Bigr)\Bigr]=\sum_{a,b}c_ac'_b\,|\langle e^k_a|e^l_b\rangle|^2
+=\frac1d\Bigl(\sum_ac_a\Bigr)\Bigl(\sum_bc'_b\Bigr)=0 .
+\]
+By Bessel's inequality, $\sum_k\|\Pi_{S_k}A_0\|_2^2\le\|A_0\|_2^2=\Tr(A^2)-(\Tr A)^2/d$, with equality if and only
+if $A_0\in\bigoplus_kS_k$. Summing over $k$ gives $I(A)\le m(\Tr A)^2/d+\Tr(A^2)-(\Tr A)^2/d$.
+\end{proof}
+
+\begin{lemma}[EAM frames]\label{lem:frameEAM}
+Let $\psi_1,\dots,\psi_n$ be an equiangular measurement in $\C^d$, $n>d$, and $c=c_{n,d}$. For every Hermitian $A$,
+\[
+\sum_{a=1}^n\bra{\psi_a}A\ket{\psi_a}^2\;\le\;\frac n{d^2}(\Tr A)^2+(1-c)\Bigl(\Tr(A^2)-\frac{(\Tr A)^2}{d}\Bigr),
+\]
+with equality if $A$ lies in the real span of the projectors $P_a=\ket{\psi_a}\bra{\psi_a}$. Consequently the
+vectors $\sqrt{d/n}\,\psi_a$ have frame constants $\bigl(\frac dn,\frac{d(d-1)}{n(n-1)}\bigr)$.
+\end{lemma}
+
+\begin{proof}
+Let $T:\R^n\to\Herm(d)$, $T(x)=\sum_ax_aP_a$, with adjoint $(T^*A)_a=\langle P_a,A\rangle$. Then
+$\sum_a\bra{\psi_a}A\ket{\psi_a}^2=\|T^*A\|^2=\langle A,TT^*A\rangle$. The Gram matrix is
+$T^*T=G=(1-c)\one_n+cJ_n$, where $J_n$ is the all-ones matrix. It has eigenvalue $1-c+cn=n/d$ on the all-ones
+vector $\mathbf 1_n$ and eigenvalue $1-c$ on $\mathbf 1_n^\perp$. Since $TT^*T=TG$:
+\begin{itemize}
+\item $T\mathbf 1_n=\sum_aP_a=\frac nd\one$ is an eigenvector of $TT^*$ with eigenvalue $n/d$;
+\item $TT^*$ acts as $1-c$ on $V=T(\mathbf 1_n^\perp)=\{\sum_ax_aP_a:\sum_ax_a=0\}$;
+\item $TT^*$ vanishes on $(\operatorname{range}T)^\perp$.
+\end{itemize}
+Every element of $V$ is traceless, so $V\perp\one$ and $TT^*=\frac nd\Pi_{\R\one}+(1-c)\Pi_V$. Therefore
+\[
+\langle A,TT^*A\rangle=\frac nd\cdot\frac{(\Tr A)^2}{d}+(1-c)\|\Pi_VA_0\|_2^2
+\le\frac n{d^2}(\Tr A)^2+(1-c)\|A_0\|_2^2 .
+\]
+If $A$ lies in $\operatorname{range}T=\R\one\oplus V$, then $A_0\in V$ and equality holds. For the rescaled
+vectors, multiply by $(d/n)^2$. Using $1-c=\frac{n(d-1)}{d(n-1)}$,
+\[
+\frac{d^2}{n^2}\Bigl[\frac n{d^2}(\Tr A)^2+(1-c)\Bigl(\Tr A^2-\frac{(\Tr A)^2}{d}\Bigr)\Bigr]
+=\beta\Tr(A^2)+(\alpha-\beta)\frac{(\Tr A)^2}{d},
+\]
+with $\alpha=d/n$ and $\beta=\frac{d(d-1)}{n(n-1)}$, and $\alpha\ge\beta$ because $n>d$.
+\end{proof}
+
+\begin{proof}[Proof of the bounds in Theorems~\ref{thm:mub} and~\ref{thm:eam}]
+Apply Theorem~\ref{thm:general} with the frame constants of Lemmas~\ref{lem:frameMUB} and~\ref{lem:frameEAM}. For
+EAMs, use $a_i=\sqrt{d/n}\,\psi_i$ and $b_j=\sqrt{d/n}\,\varphi_j$, so that $M(\rho)=P_n(\rho)$.
+\end{proof}
+
+\section{Tightness}\label{sec:tight}
+
+\begin{proposition}\label{prop:tight}
+\begin{enumerate}
+\item Let $\{e^k_a\}$ be $m$ MUBs in $\C^d$ and $1\le r\le d$. Let Bob use the conjugate bases
+$f^l_b=\bar e^l_b$ (which are again MUBs). Let $\Pi$ be the projector onto the span of $e^1_1,\dots,e^1_r$, and
+let $\psi$ have coefficient matrix $X=\Pi/\sqrt r$. Then $\psi$ is a unit vector of Schmidt rank $r$ and
+$\|Q_m(\ket\psi\bra\psi)\|_{\tr}=1+(m-1)r/d$.
+\item Let $\{\psi_a\}$ be an EAM, let Bob use $\varphi_b=\bar\psi_b$, and let $\Pi$ be a rank-$r$ projector in the
+real span of the $P_a$. The state with $X=\Pi/\sqrt r$ attains the bound of Theorem~\ref{thm:eam}. Rank-$r$
+projectors in this span exist for $r=1$ ($P_a$), $r=d$ ($\one=\frac dn\sum_aP_a$) and $r=d-1$ ($\one-P_a$), and
+for every $r$ when the $P_a$ span $\Herm(d)$, as for SICs.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+In both cases $M_{ij}=|\bra{a_i}X\ket{a_j}|^2$ with $X\succeq0$, where $a$ is Alice's family (rescaled by
+$\sqrt{d/n}$ in case 2). With $x_i=X^{1/2}a_i$ we get $M_{ij}=\langle x_i\otimes\bar x_i|x_j\otimes\bar x_j\rangle$.
+So $M$ is a Gram matrix, hence positive semidefinite, and $\|M\|_1=\Tr M=\sum_i\bra{a_i}X\ket{a_i}^2=I_a(X)$.
+
+In case~1, $\bra{e^1_a}\Pi\ket{e^1_a}\in\{0,1\}$ with $r$ ones, and
+$\bra{e^k_a}\Pi\ket{e^k_a}=\sum_{b\le r}|\langle e^k_a|e^1_b\rangle|^2=r/d$ for $k\ne1$. So
+$I(\Pi/\sqrt r)=\frac1r\bigl(r+(m-1)d\frac{r^2}{d^2}\bigr)=1+\frac{(m-1)r}{d}$.
+
+In case~2, equality holds in Lemma~\ref{lem:frameEAM} because $X$ lies in the span of the $P_a$. With
+$\Tr X=\sqrt r$ and $\Tr X^2=1$, the value of $I_a(X)$ is the right-hand side of~\eqref{eq:frame} at
+$(\Tr A)^2=r$, which is the bound.
+\end{proof}
+
+\begin{remark}[intermediate Schmidt numbers for equiangular measurements]
+For the simplex EAM ($n=d+1$) the span of the $P_a$ has dimension $d+1$, and the construction above does not
+reach $2\le r\le d-2$. Numerical optimisation over pure states of Schmidt rank $r$ gives maxima strictly below
+the bound in all cases we tried: $0.69496<0.7$ for $(d,r)=(4,2)$; $0.73100<0.73333$ and $0.76026<0.76667$ for
+$d=5$, $r=2,3$; and $0.78230<0.78571$ for $(d,r)=(6,3)$. For $r=d-1$ the bound is attained, as proved above. We do not claim tightness at intermediate $r$ for general EAMs.
+\end{remark}
+
+\section{Remarks}\label{sec:remarks}
+
+\begin{remark}[a stronger inequality]
+For a pure state with coefficient matrix $X$ (not necessarily normalised), the proof gives
+$\|Q_m\|_{\tr}\le\|X\|_2^2+(m-1)\|X\|_1^2/d$. Theorem~\ref{thm:mub} follows from this via
+$\|X\|_1^2\le r\|X\|_2^2$.
+\end{remark}
+
+\begin{remark}[unequal sets and dimensions]
+The proof of Theorem~\ref{thm:general} applies verbatim to $\C^{d_A}\otimes\C^{d_B}$, with the frame
+inequality~\eqref{eq:frame} in the respective dimension. For $m_A$ MUBs in $\C^{d_A}$ and $m_B$ MUBs in $\C^{d_B}$
+it gives
+$\|Q\|_{\tr}\le\bigl[(1+(m_A-1)r/d_A)(1+(m_B-1)r/d_B)\bigr]^{1/2}$ for $\SN(\rho)\le r$.
+\end{remark}
+
+\begin{remark}[comparison with the triangle inequality]\label{rem:triangle}
+Write a unit vector of Schmidt rank $r$ as $\psi=\sum_s\sqrt{\lambda_s}\,u_s\otimes v_s$. Expanding
+$Q_m(\ket\psi\bra\psi)$ in the Schmidt terms and using the triangle inequality leads to bounds of the form
+$\|X\|_1^2+(m-1)\|X\|_2^2/d$, that is, $r+(m-1)/d$ in the worst case. This exceeds
+$1+(m-1)r/d$ by $(r-1)(d+1-m)/d$, which is positive for $r\ge2$ and $m\le d$. The Gram factorisation of
+Lemma~\ref{lem:factor} places the trace norm $\|X\|_1^2$ on the ``coherent'' term $(m-1)/d$ and the
+Hilbert--Schmidt norm on the diagonal term, which is the tight arrangement.
+\end{remark}
+
+\begin{remark}[scope]
+Conjecture~1 of~\cite{TavakoliMorelli2024}, on complete sets of MUBs and SICs, is not addressed here.
+\end{remark}
+
+\section{Formal verification}\label{sec:lean}
+
+Theorems~\ref{thm:mub} and~\ref{thm:eam} are formalised in Lean~4 (version 4.33.1)~\cite{Lean4} with the Mathlib
+library~\cite{Mathlib2020} (revision \texttt{0df444a3}). The formal statements are:
+\begin{alltt}\footnotesize
+theorem tavakoli_morelli_conjecture_3 (hm : 1 \(\le\) m) (e f : Fin m \(\to\) Fin d \(\to\) Fin d \(\to\) \(\mathbb{C}\))
+    (he : IsMUB d m e) (hf : IsMUB d m f) (\(\rho\) : Matrix (Fin d \(\times\) Fin d) (Fin d \(\times\) Fin d) \(\mathbb{C}\))
+    (h\(\rho\) : HasSchmidtNumberLE \(\rho\) r) :
+    traceNorm (probMatrix e f \(\rho\)) \(\le\) 1 + ((m : \(\mathbb{R}\)) - 1) * r / d
+
+theorem tavakoli_morelli_conjecture_2 (hdn : d < n) \{\(\psi\) \(\varphi\) : Fin n \(\to\) Fin d \(\to\) \(\mathbb{C}\)\}
+    (h\(\psi\) : IsEAM d n \(\psi\)) (h\(\varphi\) : IsEAM d n \(\varphi\)) (\(\rho\) : Matrix (Fin d \(\times\) Fin d) (Fin d \(\times\) Fin d) \(\mathbb{C}\))
+    (h\(\rho\) : HasSchmidtNumberLE \(\rho\) r) :
+    traceNorm (eamProbMatrix \(\psi\) \(\varphi\) \(\rho\)) \(\le\) ((d : \(\mathbb{R}\)) * (d - 1) + r * (n - d)) / (n * (n - 1))
+\end{alltt}
+The definitions are as follows.
+\begin{itemize}
+\item \lean{traceNorm} is the sum of the singular values, defined through the eigenvalues of $Q^{\mathsf T}Q$.
+\item \lean{HasSchmidtNumberLE} states that $\rho$ is a finite convex combination of projectors onto unit vectors
+of Schmidt rank at most $r$.
+\item \lean{IsMUB} and \lean{IsEAM} are the definitions of Section~\ref{sec:results}.
+\item \lean{probMatrix} and \lean{eamProbMatrix} are the matrices $Q_m$ and $P_n$.
+\end{itemize}
+The formal proof proceeds through the variational characterisation of the trace norm. It shows, using a singular
+value decomposition built from Mathlib's spectral theorem, that $\|Q\|_{\tr}\le\gamma$ as soon as
+$\Tr(O^{\mathsf T}Q)\le\gamma$ for every real orthogonal $O$. The bound on $\Tr(O^{\mathsf T}Q)$ (theorems
+\lean{tavakoli\_morelli\_conjecture\_3\_dual} and \lean{\_2\_dual}) is proved along the lines of
+Lemma~\ref{lem:factor} and Lemmas~\ref{lem:frameMUB} and~\ref{lem:frameEAM}.
+
+All main theorems depend only on Lean's standard axioms (\lean{propext}, \lean{Classical.choice},
+\lean{Quot.sound}). The development contains no \lean{sorry} and no \lean{native\_decide}. As sanity checks the
+repository also contains non-vacuity examples (qubit MUBs and a Bell state).
+
+\section*{Data availability}
+The Lean project, the numerical checks and the verification logs are available at
+\url{https://github.com/anshM123/Tavakoli-Morelli-Conjecture}.
+
+\begin{thebibliography}{99}
+
+\bibitem{TavakoliMorelli2024}
+A.~Tavakoli and S.~Morelli, \emph{Enhanced Schmidt number criteria based on correlation trace norms},
+Phys. Rev. A \textbf{110}, 062417 (2024), arXiv:2402.09972.
+
+\bibitem{TerhalHorodecki2000}
+B.~M.~Terhal and P.~Horodecki, \emph{Schmidt number for density matrices}, Phys. Rev. A \textbf{61}, 040301(R)
+(2000).
+
+\bibitem{Spengler2012}
+C.~Spengler, M.~Huber, S.~Brierley, T.~Adaktylos, and B.~C.~Hiesmayr, \emph{Entanglement detection via mutually
+unbiased bases}, Phys. Rev. A \textbf{86}, 022311 (2012).
+
+\bibitem{Bavaresco2018}
+J.~Bavaresco, N.~Herrera Valencia, C.~Kl\"ockl, M.~Pivoluska, P.~Erker, N.~Friis, M.~Malik, and M.~Huber,
+\emph{Measurements in two bases are sufficient for certifying high-dimensional entanglement}, Nat. Phys.
+\textbf{14}, 1032 (2018).
+
+\bibitem{WoottersFields1989}
+W.~K.~Wootters and B.~D.~Fields, \emph{Optimal state-determination by mutually unbiased measurements}, Ann. Phys.
+\textbf{191}, 363 (1989).
+
+\bibitem{Durt2010}
+T.~Durt, B.-G.~Englert, I.~Bengtsson, and K.~\.Zyczkowski, \emph{On mutually unbiased bases}, Int. J. Quantum Inf.
+\textbf{8}, 535 (2010).
+
+\bibitem{Bhatia1997}
+R.~Bhatia, \emph{Matrix Analysis}, Graduate Texts in Mathematics \textbf{169} (Springer, New York, 1997).
+
+\bibitem{Lean4}
+L.~de~Moura and S.~Ullrich, \emph{The Lean 4 theorem prover and programming language}, in \emph{Automated
+Deduction -- CADE 28}, Lecture Notes in Computer Science \textbf{12699} (Springer, 2021), pp.~625--635.
+
+\bibitem{Mathlib2020}
+The mathlib Community, \emph{The Lean mathematical library}, in \emph{Proceedings of the 9th ACM SIGPLAN
+International Conference on Certified Programs and Proofs (CPP 2020)} (ACM, 2020), pp.~367--381.
+
+\end{thebibliography}
+
+\end{document}

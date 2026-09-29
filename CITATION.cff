@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
-title: "Proof of the Tavakoli-Morelli Schmidt-number conjectures (machine-checked in Lean 4)"
+title: "Proof of two conjectures of Tavakoli and Morelli on Schmidt-number witnesses"
 type: software
 authors:
   - family-names: Mishra

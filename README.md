@@ -2,6 +2,8 @@
 
 **Authors:** Ansh Mishra, Aryan Senthilkumar
 
+**Paper:** [`paper/TM_paper.pdf`](paper/TM_paper.pdf) (LaTeX source `paper/main.tex`).
+
 A. Tavakoli and S. Morelli (arXiv:2402.09972, Phys. Rev. A **110**, 062417 (2024)) proposed Schmidt-number witnesses built from the trace norm of correlation (joint-probability) matrices, and conjectured sharp bounds for incomplete sets of mutually unbiased bases (MUBs) and for equiangular measurements (EAMs). We prove **Conjecture 3** and **Conjecture 2**, both with tight bounds, and formalise both proofs in **Lean 4 + Mathlib** with no `sorry` and no axioms beyond Lean's standard three.
 
 ## Results
@@ -74,6 +76,7 @@ python adversarial.py          # adversarial search for violations of the streng
   - **Conjecture 1** (measurement independence for complete MUBs/SICs) is plausibly implied by Siudzińska, arXiv:2506.18211, and is **not** claimed here.
 
 ## Layout
+- `paper/`: the paper (PDF and LaTeX source).
 - `PROOF.md`: the full mathematical proof, with corollaries and tightness.
 - `lean/`: the Lean project (`TMProof/TM.lean`, `TM2.lean`, `Axioms.lean`, `check.sh`, `lakefile.toml`, `lean-toolchain`).
 - `code/`: numerical verification.
