@@ -6,7 +6,7 @@ Started 2026-09-27. Focus: proof.
 - Read coordinator numerics: ../schmidt/tm_strong.py, ../schmidt/tm_conjecture.py (prime-d MUBs: computational + omega^{k j^2 + a j}/sqrt d).
 - Target (strengthened): ||Q_m(X)||_1 <= ||X||_F^2 + (m-1)||X||_1^2/d for all X in M_d(C).
 
-## Entry 2 — paper definitions (WebFetch of arXiv:2402.09972 html)
+## Entry 2 — paper definitions (from the arXiv:2402.09972 HTML version)
 - Q_{al,bk} = <g^l_a, h^k_b| rho |g^l_a, h^k_b>, Alice MUBs {g}, Bob MUBs {h} are INDEPENDENT sets (not necessarily conjugate).
   For pure psi = vec(X): Q = |<g|X|conj(h)>|^2, i.e. Q = |<e^k_a|X|f^l_b>|^2 with e = g, f = conj(h) (again a set of MUBs).
 - Conj 1: if SIC and complete MUBs exist in d_A, d_B then ||Q||_tr = K ||P||_tr, K = sqrt(d_A(d_A+1)) sqrt(d_B(d_B+1)).

@@ -1,6 +1,6 @@
 # P-LEAN log: Tavakoli–Morelli Conjecture 3 (Schmidt number bound for incomplete MUB sets)
 
-Check command (from the project root `formal-conjectures/`, with `C:\Users\anshm\.elan\bin` on PATH):
+Check command (from the project root `formal-conjectures/`, with `<home>\.elan\bin` on PATH):
 
     lake env lean TMProof/TM.lean
 
