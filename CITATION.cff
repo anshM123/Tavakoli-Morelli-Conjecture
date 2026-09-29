@@ -1,7 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it as below."
+message: "If you use this work, please cite the preprint below."
 title: "Proof of two conjectures of Tavakoli and Morelli on Schmidt-number witnesses"
-type: software
 authors:
   - family-names: Mishra
     given-names: Ansh
@@ -18,3 +17,19 @@ keywords:
   - "equiangular measurements"
   - "entanglement witness"
   - "Lean 4"
+preferred-citation:
+  type: article
+  status: preprint
+  title: "Proof of two conjectures of Tavakoli and Morelli on Schmidt-number witnesses"
+  authors:
+    - family-names: Mishra
+      given-names: Ansh
+    - family-names: Senthilkumar
+      given-names: Aryan
+  year: 2026
+  month: 9
+  url: "https://github.com/anshM123/Tavakoli-Morelli-Conjecture"
+  keywords:
+    - "Schmidt number"
+    - "mutually unbiased bases"
+    - "equiangular measurements"
