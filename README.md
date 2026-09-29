@@ -1,5 +1,7 @@
 # Proof of the Tavakoli–Morelli Schmidt-number conjectures (machine-checked in Lean 4)
 
+**Authors:** Ansh Mishra, Aryan Senthilkumar
+
 A. Tavakoli and S. Morelli (arXiv:2402.09972, Phys. Rev. A **110**, 062417 (2024)) proposed Schmidt-number witnesses built from the trace norm of correlation (joint-probability) matrices, and conjectured sharp bounds for incomplete sets of mutually unbiased bases (MUBs) and for equiangular measurements (EAMs). We prove **Conjecture 3** and **Conjecture 2**, both with tight bounds, and formalise both proofs in **Lean 4 + Mathlib** with no `sorry` and no axioms beyond Lean's standard three.
 
 ## Results
@@ -77,3 +79,9 @@ python adversarial.py          # adversarial search for violations of the streng
 - `code/`: numerical verification.
 - `logs/`: our Lean verification run (`lean_check_fresh.log`).
 - `research-log/`: working logs, including the Lean formalisation log.
+
+## License
+MIT (see `LICENSE`). Copyright (c) 2026 Ansh Mishra and Aryan Senthilkumar.
+
+## How to cite
+See `CITATION.cff`. The archived release (Zenodo) has its own DOI.

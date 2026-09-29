@@ -1,0 +1,26 @@
+{
+  "title": "Proof of the Tavakoli-Morelli Schmidt-number conjectures (machine-checked in Lean 4)",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "description": "Proof of Conjectures 2 and 3 of A. Tavakoli and S. Morelli (Phys. Rev. A 110, 062417 (2024)): tight trace-norm bounds on joint-probability matrices from incomplete sets of mutually unbiased bases and from equiangular measurements, for states of bounded Schmidt number. Both theorems are formalised in Lean 4 with Mathlib using only the standard axioms. The repository contains the proof, the Lean project, numerical checks and verification logs.",
+  "creators": [
+    {
+      "name": "Mishra, Ansh"
+    },
+    {
+      "name": "Senthilkumar, Aryan"
+    }
+  ],
+  "license": "mit",
+  "access_right": "open",
+  "keywords": [
+    "entanglement",
+    "Schmidt number",
+    "mutually unbiased bases",
+    "equiangular measurements",
+    "entanglement witness",
+    "Lean 4"
+  ],
+  "version": "1.0",
+  "language": "eng"
+}

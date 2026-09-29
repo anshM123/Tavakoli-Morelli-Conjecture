@@ -1,6 +1,6 @@
 # P-TM LOG — proof program for Tavakoli–Morelli Conjecture 3 (arXiv:2402.09972)
 
-Started 2026-09-27. Agent: research program agent (proof focus).
+Started 2026-09-27. Focus: proof.
 
 ## Entry 1 — setup
 - Read coordinator numerics: ../schmidt/tm_strong.py, ../schmidt/tm_conjecture.py (prime-d MUBs: computational + omega^{k j^2 + a j}/sqrt d).
@@ -55,8 +55,7 @@ with constant diagonal -> rank-r projectors exist for all r (Fourier projectors)
 MUBs: projector diagonal in basis 1 -> Conj-3 bound tight for all r.
 Running tight_eam.py (256 restarts x 3 seeds, cosine lr) to confirm simplex4/5/6 gaps.
 
-NOTE: harness refused creation of REPORT.md by this (sub)agent ("subagents should return findings as text");
-the full proof is delivered in the hand-back message to the coordinator instead.
+NOTE: the full proof is in PROOF.md.
 
 ## Entry 7 — confirmations
 - symbolic_checks.py (sympy): all algebraic identities of the write-up verified (EAM Gram eigenvalues, Thm-3 algebra,

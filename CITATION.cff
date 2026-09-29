@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Proof of the Tavakoli-Morelli Schmidt-number conjectures (machine-checked in Lean 4)"
+type: software
+authors:
+  - family-names: Mishra
+    given-names: Ansh
+  - family-names: Senthilkumar
+    given-names: Aryan
+version: "1.0"
+date-released: "2026-09-28"
+license: MIT
+repository-code: "https://github.com/anshM123/Tavakoli-Morelli-Conjecture"
+keywords:
+  - "entanglement"
+  - "Schmidt number"
+  - "mutually unbiased bases"
+  - "equiangular measurements"
+  - "entanglement witness"
+  - "Lean 4"
